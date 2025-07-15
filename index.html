@@ -1,0 +1,1005 @@
+<!-- ✅ FundMate with Pay Now + UPI Feature -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+
+<script>
+  const supabaseUrl = 'https://ltdzsdlvbvthyeqvibvf.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0ZHpzZGx2YnZ0aHllcXZpYnZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI1OTcwNTIsImV4cCI6MjA2ODE3MzA1Mn0.jHqz-kfXDpizghwA6mVk6z6zFQhcvBzrDYy5WQJJrtM';
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FundMate</title>
+  <style>
+     * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #121212;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+    canvas#bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 255, 128, 0.3);
+      text-align: center;
+      margin-bottom: 20px;
+      z-index: 1;
+    }
+    .student-list-container {
+      max-width: 1000px;
+      margin: 30px auto 0;
+      overflow-x: auto;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: #00ff99;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    input {
+      background-color: #2c2c2c;
+      color: white;
+    }
+    button {
+      background-color: #00ff99;
+      color: #000;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #00cc77;
+    }
+.status-box {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: bold;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+}
+    
+    .paid {
+      background-color: #00e676;
+      color: #000;
+    }
+    .pending {
+      background-color: #ff5252;
+      color: #fff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: #1e1e1e;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #333;
+      text-align: left;
+    }
+    th {
+      color: #00ff99;
+    }
+    td.name-cell {
+      cursor: pointer;
+    }
+    #adminTable {
+  border: 1px solid #00ff99;
+  box-shadow: 0 0 15px rgba(0, 255, 128, 0.4);
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+}
+
+    .back-btn {
+      margin-top: 20px;
+      background-color: #333;
+      color: #fff;
+      width: auto;
+      padding: 8px 20px;
+    }
+    .pay-now-btn {
+  background-color: #00ff99;
+  color: black;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: bold;
+  min-width: 80px;
+  cursor: pointer;
+}
+.pay-now-btn:hover {
+  background-color: #00cc77;
+}
+.pay-now-btn {
+  background-color: #00ff99;
+  color: #000;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: background 0.3s;
+}
+
+.pay-now-btn:hover {
+  background-color: #00cc77;
+}
+.wide-container {
+  width: 100%;
+  max-width: 800px;
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 0 15px rgba(0, 255, 128, 0.3);
+  margin: 20px auto;
+  text-align: center; /* ✅ Add this line */
+}
+
+
+
+  </style>
+</head>
+<body>
+  <canvas id="bgCanvas"></canvas>
+
+  <!-- UI Sections (Home, Admin Signup/Login, User View, Admin Panel, User Panel, etc.) -->
+  <!-- ✅ ... (unchanged HTML from your original code, so skipping here for brevity) -->
+
+  <!-- ✅ Admin Panel: Just confirm this part in your HTML -->
+  <!-- Note: The admin panel HTML is dynamically injected in JS (showAdminPanel), so no need to hardcode the UPI field here -->
+    <!-- Home Page -->
+  <div class="container" id="home">
+    <h1>FundMate</h1>
+    <button onclick="showAdminSignup()">Admin Signup</button>
+    <button onclick="showAdminLogin()">Admin Login</button>
+    <button onclick="showUserLogin()">User View</button>
+  </div>
+
+  <!-- Admin Signup -->
+  <div class="container" id="adminSignup" style="display:none">
+    <h2>Admin Signup</h2>
+    <input id="signupUsername" placeholder="Username">
+    <input id="signupPassword" placeholder="Password" type="password">
+    <input id="signupPurpose" placeholder="Purpose Name">
+   <!--<input id="signupUpi" placeholder="Your UPI ID">-->
+    <input id="signupUPI" placeholder="UPI ID">
+    <input id="signupUniqueId" placeholder="Unique ID">
+    <button onclick="adminSignup()">Sign Up</button>
+    <button class="back-btn" onclick="goHome()">Back</button>
+  </div>
+
+  <!-- Admin Login -->
+  <div class="container" id="adminLogin" style="display:none">
+    <h2>Admin Login</h2>
+    <input id="loginUsername" placeholder="Username">
+    <input id="loginPassword" placeholder="Password" type="password">
+    <button onclick="adminLogin()">Login</button>
+    <button class="back-btn" onclick="goHome()">Back</button>
+  </div>
+
+  <!-- User View -->
+  <div class="container" id="userLogin" style="display:none">
+    <h2>User View</h2>
+    <input id="userUniqueId" placeholder="Enter Unique ID">
+    <button onclick="viewUser()">View</button>
+    <button class="back-btn" onclick="goHome()">Back</button>
+  </div>
+
+  <!-- Admin Panel -->
+  <!--<div class="container" id="adminPanel" style="display:none; max-width: 800px;"> -->
+    <div class="wide-container" id="adminPanel" style="display:none;">
+
+    <h1>FundMate</h1>
+    <h2 id="adminPurpose"></h2>
+    <input id="studentName" placeholder="Student Name">
+    <input id="studentAmount" placeholder="Amount" type="number">
+    <button onclick="addStudent()">Add Student</button>
+    <button onclick="changeAllAmounts()">Change All Amounts</button>
+    <button onclick="resetAllToPending()">Reset All</button>
+
+    <button onclick="exportToExcel()">Export to Excel</button>
+  </div>
+
+  <!-- Student List -->
+  <!-- Student List -->
+<!-- <div class="student-list-container" id="adminStudentSection" style="display:none;"> -->
+    <div class="wide-container" id="adminStudentSection" style="display:none;">
+  <table id="adminTable"></table>
+  <button onclick="clearAllStudents()" style="margin-top: 20px; background-color: #ff3333; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">
+    🗑️ Clear All Students
+  </button>
+</div>
+
+  <!-- Summary and Logout -->
+  <!--<div class="container" style="margin-top: 30px; display:none;" id="summarySection"> -->
+    <div class="wide-container" style="display:none;" id="summarySection">
+    <p id="summary" style="margin-bottom: 20px;"></p>
+    <button class="back-btn" onclick="logout()">Logout</button>
+  </div>
+
+  <!-- User Panel -->
+  <div class="container" id="userPanel" style="display:none">
+    <h2 id="userPurpose"></h2>
+    <table id="userTable"></table>
+    <p id="userSummary"></p>
+    <button class="back-btn" onclick="goHome()">Back</button>
+  </div>
+
+  <script>
+    let qrStudent = null;
+let qrAdminUpi = null;
+
+function payNow(adminId, index) {
+  const student = db[adminId].students[index];
+  const adminUpi = db[adminId].upi;
+  const upiLink = `upi://pay?pa=${adminUpi}&pn=${encodeURIComponent(student.name)}&am=${student.amount}&cu=INR`;
+
+  if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+    // On mobile, open UPI app
+    window.location.href = upiLink;
+    setTimeout(() => {
+      const confirmPay = confirm("After payment, click OK to mark as Paid.");
+      if (confirmPay) {
+        student.paid = true;
+        printReceipt(student, adminUpi);
+        viewUser();
+      }
+    }, 2000);
+  } else {
+    // On desktop, show QR popup
+    qrStudent = student;
+    qrAdminUpi = adminUpi;
+    document.getElementById("upiInfoText").innerText = `Pay ₹${student.amount} to UPI ID: ${adminUpi}`;
+    QRCode.toCanvas(document.createElement("canvas"), upiLink, function (err, canvas) {
+      const container = document.getElementById("qrCodeContainer");
+      container.innerHTML = "";
+      container.appendChild(canvas);
+    });
+    document.getElementById("qrPopup").style.display = "flex";
+  }
+}
+
+/*function markAsPaid() {
+  const confirmCode = prompt("Enter admin-confirmation code to mark as paid:");
+  if (confirmCode !== "55555") return alert("Incorrect code.");
+  qrStudent.paid = true;
+  alert("Payment marked as successful!");
+  printReceipt(qrStudent, qrAdminUpi);
+  qrStudent = null;
+  qrAdminUpi = null;
+  closeQR();
+  viewUser();
+}*/
+function markAsPaid() {
+  if (selectedUserId !== null && selectedStudentIndex !== null) {
+    const student = db[selectedUserId].students[selectedStudentIndex];
+
+    // Simulate message to admin & get confirmation
+    const confirmMsg = `User is claiming to have paid ₹${student.amount} for "${student.name}".\n\nApprove and mark as paid?`;
+    const confirmed = confirm(confirmMsg);
+
+    if (confirmed) {
+      student.paid = true;
+      student.clicked = false; // optional: reset the frozen Pay Now button
+      closeQR();
+      viewUser(); // Refresh the table
+      alert("Marked as paid.");
+    } else {
+      alert("Payment not approved.");
+    }
+  }
+}
+
+/*function closeQR() {
+  document.getElementById("qrPopup").style.display = "none";
+}*/
+function closeQR() {
+  document.getElementById("qrPopup").style.display = "none";
+  selectedStudentIndex = null;
+  selectedUserId = null;
+}
+
+let selectedStudentIndex = null;
+let selectedUserId = null;
+
+/*function showQR(upiId, name, amount, studentIndex, userId) {
+  const upiURL = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR`;
+  const qrAPI = `https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=${encodeURIComponent(upiURL)}`;
+ console.log("QR URL:", qrAPI);
+  document.getElementById("qrCodeContainer").innerHTML = `<img src="${qrAPI}" width="250" height="250" alt="UPI QR">`;
+  document.getElementById("upiInfoText").innerText = `Pay ₹${amount} to ${upiId}`;
+  document.getElementById("qrPopup").style.display = "flex";
+
+  selectedStudentIndex = studentIndex;
+  selectedUserId = userId;
+}*/
+function showQR(upiId, amount, name) {
+  const qrUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR`;
+
+  const qrAPI = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrUrl)}`;
+
+  const qrContainer = document.getElementById('qrCodeContainer');
+  qrContainer.innerHTML = `<img src="${qrAPI}" alt="QR Code">`;
+
+  document.getElementById('upiInfoText').innerText = `UPI ID: ${upiId}\nAmount: ₹${amount}`;
+  document.getElementById('qrPopup').style.display = 'flex';
+}
+
+function closeQR() {
+  document.getElementById('qrPopup').style.display = 'none';
+}
+
+
+
+    // Particle animation (unchanged)
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 3 + 1,
+          dx: (Math.random() - 0.5) * 0.7,
+          dy: (Math.random() - 0.5) * 0.7
+        });
+      }
+    }
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = 'rgba(0, 255, 153, 0.6)';
+      for (let p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    createParticles();
+    animateParticles();
+
+    // ✅ Main database and control logic
+    let db = {
+      mainadmin: {
+        user: 'mainadmin',
+        pass: 'admin123',
+        purpose: 'Master Admin',
+        students: [],
+        isMain: true
+      }
+    };
+    let currentAdmin = null;
+
+    function hideAll() {
+      ['home','adminSignup','adminLogin','userLogin','adminPanel','adminStudentSection','summarySection','userPanel'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+    }
+
+    function goHome() {
+      hideAll();
+      document.getElementById('home').style.display = 'block';
+    }
+
+    function showAdminSignup() {
+      hideAll();
+      document.getElementById('adminSignup').style.display = 'block';
+    }
+
+    function showAdminLogin() {
+      hideAll();
+      document.getElementById('adminLogin').style.display = 'block';
+    }
+
+    function showUserLogin() {
+      hideAll();
+      document.getElementById('userLogin').style.display = 'block';
+    }
+
+ 
+    /*function adminSignup() {
+  const user = signupUsername.value.trim();
+  const pass = signupPassword.value;
+  const purpose = signupPurpose.value.trim();
+  const uid = signupUniqueId.value.trim();
+  const upi = signupUpi.value.trim();
+
+  if (!user || !pass || !purpose || !uid || !upi) return alert('Fill all fields');
+  if (!isValidUpi(upi)) return alert('Invalid UPI ID format');
+  if (db[uid]) return alert('ID already exists');
+
+  db[uid] = { user, pass, purpose, upi, students: [] };
+  alert('Signup Successful!');
+  goHome();
+}*/
+async function adminSignup() {
+  const user = signupUsername.value.trim();
+  const pass = signupPassword.value;
+  const purpose = signupPurpose.value.trim();
+  const upi = signupUPI.value.trim();
+
+  if (!user || !pass || !purpose || !upi) return alert('Fill all fields');
+
+  const hashedPassword = await bcrypt.hash(pass, 10);
+
+  const { error } = await supabase
+    .from('admins')
+    .insert([{ username: user, password: hashedPassword, purpose, upi }]);
+
+  if (error) return alert("Signup failed: " + error.message);
+  alert("Signup successful!");
+  goHome();
+}
+
+/* function adminLogin() {
+      const user = loginUsername.value.trim();
+      const pass = loginPassword.value;
+      for (const id in db) {
+        if (db[id].user === user && db[id].pass === pass) {
+          currentAdmin = id;
+          if (db[id].isMain) {
+            showMainAdminPanel();
+          } else {
+            showAdminPanel();
+          }
+          return;
+        }
+      }
+      alert('Invalid credentials');
+    }*/
+ async function adminLogin() {
+  const user = loginUsername.value.trim();
+  const pass = loginPassword.value;
+
+  const { data: admin, error } = await supabase
+    .from('admins')
+    .select('*')
+    .eq('username', user)
+    .single();
+
+  if (error || !admin) return alert("Invalid credentials");
+
+  const match = await bcrypt.compare(pass, admin.password);
+  if (!match) return alert("Wrong password");
+
+  sessionStorage.setItem('admin', JSON.stringify(admin));
+  currentAdmin = admin;
+  showAdminPanel();
+}
+
+
+
+    function isValidUpi(upi) {
+  const upiRegex = /^[\w.\-]{2,256}@[a-zA-Z]{2,64}$/;
+  return upiRegex.test(upi);
+}
+
+
+    function showAdminPanel() {
+      hideAll();
+      document.getElementById('adminPanel').innerHTML = `
+  <h1>FundMate</h1>
+ <h2 id="adminPurpose">${currentAdmin.purpose}</h2>
+  <input id="studentName" placeholder="Student Name">
+  <input id="studentAmount" placeholder="Amount" type="number">
+  <button onclick="addStudent()">Add Student</button>
+  <button onclick="changeAllAmounts()">Change All Amounts</button>
+  <button onclick="resetAllToPending()">Reset All to Pending</button>
+  <button onclick="exportToExcel()">Export to Excel</button>
+`;
+
+      document.getElementById('adminPanel').style.display = 'block';
+      renderAdminTable();
+    }
+
+    function showMainAdminPanel() {
+      hideAll();
+      let html = `<h2>All Admins Overview</h2>
+      <div style="overflow-x:auto;">
+        <table style="width:100%; margin-top:10px; min-width: 600px;">
+          <tr><th>ID</th><th>Username</th><th>Purpose</th><th>Student Count</th><th>Actions</th></tr>`;
+      for (const id in db) {
+        if (!db[id].isMain) {
+          html += `<tr>
+            <td>${id}</td>
+            <td>${db[id].user}</td>
+            <td>${db[id].purpose}</td>
+            <td>${db[id].students.length}</td>
+            <td><button onclick="deleteAdmin('${id}')">Delete</button></td>
+          </tr>`;
+        }
+      }
+      html += `</table></div>`;
+      document.getElementById('adminPanel').innerHTML = `
+        <h1>FundMate</h1>
+        ${html}
+        <button class="back-btn" onclick="logout()">Logout</button>
+      `;
+      document.getElementById('adminPanel').style.display = 'block';
+    }
+
+    function deleteAdmin(adminId) {
+      if (confirm(`Are you sure you want to delete admin "${adminId}"?`)) {
+        delete db[adminId];
+        showMainAdminPanel();
+      }
+    }
+
+   /*function addStudent() {
+  const nameInput = document.getElementById('studentName');
+  const amountInput = document.getElementById('studentAmount');
+
+  const name = nameInput.value.trim();
+  const amount = parseFloat(amountInput.value);
+
+  if (!name || isNaN(amount) || amount < 0) {
+    return alert('Enter valid name and amount');
+  }
+
+  db[currentAdmin].students.push({ name, amount, paid: false });
+  nameInput.value = '';
+  amountInput.value = '';
+  renderAdminTable();
+}*/
+async function addStudent() {
+  const name = studentName.value.trim();
+  const amount = parseFloat(studentAmount.value);
+
+  if (!name || isNaN(amount) || amount < 0) return alert("Enter valid name and amount");
+
+  const { data, error } = await supabase
+    .from('students')
+    .insert([{ admin_id: currentAdmin.id, name, amount, paid: false }]);
+
+  if (error) {
+    alert("Failed to add student: " + error.message);
+    return;
+  }
+
+  studentName.value = '';
+  studentAmount.value = '';
+  renderAdminTable(); // reload table
+}
+
+
+   /* function renderAdminTable() {
+      const students = db[currentAdmin].students;
+      let html = `<tr><th>Name</th><th>Amount</th><th>Status</th><th>Actions</th></tr>`;
+      let total = 0, received = 0;
+      students.forEach((s, i) => {
+        total += s.amount;
+        if (s.paid) received += s.amount;
+        html += `<tr>
+         <td class="name-cell" onclick="editName(${i})">${s.name}</td>
+<td class="amount-cell" onclick="editAmount(${i})">₹${s.amount}</td>
+
+          <td><span class="status-box ${s.paid ? 'paid' : 'pending'}">${s.paid ? 'Paid' : 'Pending'}</span></td>
+          <td>
+            <button onclick="toggleStatus(${i})">Toggle</button>
+            <button onclick="deleteStudent(${i})">Delete</button>
+          </td>
+        </tr>`;
+      });
+      adminTable.innerHTML = html;
+      summary.innerHTML = `Total: ₹${total}<br>Received: ₹${received}<br>Remaining: ₹${total - received}`;
+      document.getElementById("adminStudentSection").style.display = "block";
+      document.getElementById("summarySection").style.display = "block";
+    }*/
+   async function renderAdminTable() {
+  const { data: students, error } = await supabase
+    .from('students')
+    .select('*')
+    .eq('admin_id', currentAdmin.id);
+
+  if (error) {
+    alert("Failed to load students");
+    return;
+  }
+
+  let html = `<tr><th>Name</th><th>Amount</th><th>Status</th><th>Actions</th></tr>`;
+  let total = 0, received = 0;
+
+  students.forEach((s, i) => {
+    total += s.amount;
+    if (s.paid) received += s.amount;
+
+    html += `
+      <tr>
+        <td>${s.name}</td>
+        <td>₹${s.amount}</td>
+        <td><span class="status-box ${s.paid ? 'paid' : 'pending'}">${s.paid ? 'Paid' : 'Pending'}</span></td>
+        <td>
+          <button onclick="toggleStatus('${s.id}')">Toggle</button>
+          <button onclick="deleteStudent('${s.id}')">Delete</button>
+        </td>
+      </tr>`;
+  });
+
+  document.getElementById('adminTable').innerHTML = html;
+  summary.innerHTML = `Total: ₹${total}<br>Received: ₹${received}<br>Remaining: ₹${total - received}`;
+  document.getElementById("adminStudentSection").style.display = "block";
+  document.getElementById("summarySection").style.display = "block";
+}
+
+
+    function editName(index) {
+      const td = document.querySelectorAll(".name-cell")[index];
+      const oldName = db[currentAdmin].students[index].name;
+      td.innerHTML = `<input type="text" id="nameInput${index}" value="${oldName}" style="width: 100%; background-color: #2c2c2c; color: white; border: none; border-radius: 5px; padding: 5px;">`;
+      const input = document.getElementById(`nameInput${index}`);
+      input.focus();
+      input.addEventListener('blur', () => {
+        const newName = input.value.trim();
+        db[currentAdmin].students[index].name = newName || oldName;
+        renderAdminTable();
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') input.blur();
+      });
+    }
+
+   /* function toggleStatus(index) {
+      const student = db[currentAdmin].students[index];
+      student.paid = !student.paid;
+      renderAdminTable();
+    }*/
+   async function toggleStatus(studentId) {
+  const { data, error } = await supabase
+    .from('students')
+    .select('paid')
+    .eq('id', studentId)
+    .single();
+
+  if (error) return alert("Error fetching status");
+
+  const updated = await supabase
+    .from('students')
+    .update({ paid: !data.paid })
+    .eq('id', studentId);
+
+  renderAdminTable();
+}
+
+
+    /*function deleteStudent(index) {
+      const student = db[currentAdmin].students[index];
+      if (confirm(`Are you sure you want to delete "${student.name}"?`)) {
+        db[currentAdmin].students.splice(index, 1);
+        renderAdminTable();
+      }
+    }*/
+   async function deleteStudent(studentId) {
+  const confirmed = confirm("Are you sure you want to delete this student?");
+  if (!confirmed) return;
+
+  const { error } = await supabase
+    .from('students')
+    .delete()
+    .eq('id', studentId);
+
+  renderAdminTable();
+}
+    function changeAllAmounts() {
+      let newAmount = prompt("Enter the new amount for all students:");
+      if (newAmount === null) return;
+      newAmount = parseFloat(newAmount);
+      if (isNaN(newAmount) || newAmount < 0) {
+        alert("Invalid amount.");
+        return;
+      }
+      db[currentAdmin].students.forEach(student => student.amount = newAmount);
+      renderAdminTable();
+    }
+/*function exportToExcel() {
+  const students = db[currentAdmin].students;
+  const purpose = db[currentAdmin].purpose;
+
+  const data = [];
+
+  // Row 1: Purpose centered over A–C
+  data.push([purpose]);
+
+  // Row 2: Headers
+  data.push(['Name', 'Amount', 'Status']);
+
+  // Student rows
+  students.forEach(s => {
+    data.push([s.name, s.amount, s.paid ? 'Paid' : 'Pending']);
+  });
+
+  const ws = XLSX.utils.aoa_to_sheet(data);
+
+  // Merge A1:C1 for purpose
+  ws['!merges'] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } }  // Merge from A1 to C1
+  ];
+
+  // Optional column widths (makes things clearer)
+  ws['!cols'] = [{ wch: 20 }, { wch: 10 }, { wch: 12 }];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "FundMate Data");
+
+  XLSX.writeFile(wb, "fundmate_data.xlsx");
+}*/
+async function exportToExcel() {
+  if (!currentAdmin?.id) return alert("No admin logged in");
+
+  // Fetch students
+  const { data: students, error } = await supabase
+    .from('students')
+    .select('*')
+    .eq('admin_id', currentAdmin.id);
+
+  if (error) return alert("Error fetching students");
+
+  // Build CSV
+  let csv = `\uFEFF${currentAdmin.purpose}\n`; // Purpose on top (centered if opened in Excel)
+  csv += 'Name,Amount,Status\n'; // Headers
+
+  students.forEach(s => {
+    csv += `${s.name},${s.amount},${s.paid ? 'Paid' : 'Pending'}\n`;
+  });
+
+  // Download
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${currentAdmin.purpose.replace(/\s+/g, "_")}_FundMate.csv`;
+  link.click();
+}
+
+
+   /* function logout() {
+      currentAdmin = null;
+      goHome();
+    }*/
+   function logout() {
+  currentAdmin = null;
+  sessionStorage.removeItem('admin');
+  goHome();
+}
+
+
+   /* function viewUser() {
+      const uid = userUniqueId.value.trim();
+      if (!db[uid]) return alert('Invalid ID');
+      hideAll();
+      userPurpose.innerHTML = `${db[uid].purpose}<br><small>Pay to UPI: <strong>${db[uid].upi}</strong></small>`;
+      userPurpose.innerText = db[uid].purpose;
+      const students = db[uid].students;
+      let html = '<tr><th>Name</th><th>Amount</th><th>Status</th></tr>';
+      let total = 0, received = 0;
+      students.forEach((s, i) => {
+        total += s.amount;
+        if (s.paid) received += s.amount;
+    html += `<tr>
+  <td>${s.name}</td>
+  <td>₹${s.amount}</td>
+  <td>
+    ${s.paid ? `<span class="status-box paid">Paid</span>` 
+              : `<button class="status-box pending" onclick="showQR('${db[uid].upi}', '${db[uid].user}', ${s.amount}, ${i}, '${uid}')">Pay Now</button>`}
+  </td>
+</tr>`;
+
+      });
+      userTable.innerHTML = html;
+      userSummary.innerHTML = `Total: ₹${total}<br>Received: ₹${received}<br>Remaining: ₹${total - received}`;
+      document.getElementById('userPanel').style.display = 'block';
+    }*/
+   async function viewUser() {
+  const uid = userUniqueId.value.trim();
+
+  // Fetch admin by UID (username or custom field)
+  const { data: adminData, error: adminError } = await supabase
+    .from('admins')
+    .select('*')
+    .eq('username', uid)
+    .single();
+
+  if (adminError || !adminData) {
+    alert('Invalid ID');
+    return;
+  }
+
+  // Save for QR UPI use
+  const userUPI = adminData.upi;
+  const purpose = adminData.purpose;
+  const adminId = adminData.id;
+
+  // Get students of that admin
+  const { data: students, error: studentError } = await supabase
+    .from('students')
+    .select('*')
+    .eq('admin_id', adminId);
+
+  if (studentError) {
+    alert('Failed to load student data');
+    return;
+  }
+
+  // Build the table
+  hideAll();
+  userPurpose.innerText = purpose;
+  let total = 0, received = 0;
+  let html = '<tr><th>Name</th><th>Amount</th><th>Status</th><th>Action</th></tr>';
+
+  students.forEach((s) => {
+    total += s.amount;
+    if (s.paid) received += s.amount;
+
+    html += `
+      <tr>
+        <td>${s.name}</td>
+        <td>₹${s.amount}</td>
+        <td><span class="status-box ${s.paid ? 'paid' : 'pending'}">${s.paid ? 'Paid' : 'Pending'}</span></td>
+        <td>
+          ${!s.paid ? `<button onclick="showQR('${userUPI}', '${s.amount}', '${s.name}')">Pay Now</button>` : ''}
+        </td>
+      </tr>`;
+  });
+
+  userTable.innerHTML = html;
+  userSummary.innerHTML = `Total: ₹${total}<br>Received: ₹${received}<br>Remaining: ₹${total - received}`;
+  document.getElementById('userPanel').style.display = 'block';
+}
+
+
+    // ✅ New Pay Now function
+    function payNow(adminId, index) {
+  const student = db[adminId].students[index];
+  if (student.paid) return;
+
+  let upi = student.upi || prompt("Enter your UPI ID to proceed with payment:");
+  if (!upi || upi.trim() === '') return alert("UPI ID is required to make payment.");
+
+  student.upi = upi;
+  student.paid = true;
+  alert(`Payment of ₹${student.amount} successful!`);
+  printReceipt(student, db[adminId].upi);
+  viewUser();
+}
+
+    function printReceipt(student, adminUpi) {
+  const win = window.open('', '', 'height=600,width=800');
+  win.document.write('<html><head><title>Payment Receipt</title></head><body>');
+  win.document.write('<h2>FundMate Payment Receipt</h2>');
+  win.document.write(`<p><strong>Name:</strong> ${student.name}</p>`);
+  win.document.write(`<p><strong>Amount:</strong> ₹${student.amount}</p>`);
+  win.document.write(`<p><strong>UPI Paid To:</strong> ${adminUpi}</p>`);
+  win.document.write(`<p><strong>Status:</strong> Paid</p>`);
+  win.document.write(`<p><strong>Date:</strong> ${new Date().toLocaleString()}</p>`);
+  win.document.write('</body></html>');
+  win.document.close();
+  win.print();
+}
+function printReceipt(student, upi) {
+  const receipt = `
+    <html>
+      <head><title>Payment Receipt</title></head>
+      <body style="font-family:sans-serif;padding:20px;">
+        <h2>FundMate Payment Receipt</h2>
+        <p><strong>Student Name:</strong> ${student.name}</p>
+        <p><strong>Amount Paid:</strong> ₹${student.amount}</p>
+        <p><strong>Paid To (UPI ID):</strong> ${upi}</p>
+        <p><strong>Status:</strong> Paid</p>
+        <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+        <br><button onclick="window.print()">Print</button>
+      </body>
+    </html>
+  `;
+  const win = window.open('', '', 'width=600,height=600');
+  win.document.write(receipt);
+  win.document.close();
+}
+function resetAllToPending() {
+  if (!confirm("Are you sure you want to reset all students to Pending?")) return;
+
+  db[currentAdmin].students.forEach(student => {
+    student.paid = false;
+  });
+
+  renderAdminTable();
+}
+function clearAllStudents() {
+  if (!confirm("This will remove all student entries permanently. Proceed?")) return;
+
+  db[currentAdmin].students = [];
+  renderAdminTable();
+}
+function editAmount(index) {
+  const td = document.querySelectorAll(".amount-cell")[index];
+  const oldAmount = db[currentAdmin].students[index].amount;
+  td.innerHTML = `<input type="number" id="amountInput${index}" value="${oldAmount}" style="width: 100%; background-color: #2c2c2c; color: white; border: none; border-radius: 5px; padding: 5px;">`;
+
+  const input = document.getElementById(`amountInput${index}`);
+  input.focus();
+
+  input.addEventListener('blur', () => {
+    const newAmount = parseFloat(input.value.trim());
+    db[currentAdmin].students[index].amount = !isNaN(newAmount) && newAmount >= 0 ? newAmount : oldAmount;
+    renderAdminTable();
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') input.blur();
+  });
+}
+window.onload = function () {
+  const savedAdmin = sessionStorage.getItem('admin');
+  if (savedAdmin) {
+    currentAdmin = JSON.parse(savedAdmin);
+    showAdminPanel();
+  }
+};
+
+  </script>
+  <div id="qrPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000000aa; backdrop-filter:blur(5px); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#1e1e1e; padding:20px; border-radius:12px; text-align:center; color:white; box-shadow:0 0 20px #00ff99;">
+    <h2>Scan to Pay</h2>
+    <div id="qrCodeContainer" style="margin: 20px 0;"></div>
+    <p id="upiInfoText"></p>
+   <!-- <button onclick="markAsPaid()" style="margin-top: 10px; padding: 10px 20px;">Mark as Paid</button> -->
+    <br><br>
+    <button onclick="closeQR()" style="background:#444; padding: 5px 10px;">Close</button>
+  </div>
+</div>
+</body>
+</html>
