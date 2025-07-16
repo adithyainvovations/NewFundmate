@@ -184,7 +184,7 @@
   </style>
 </head>
 <body>
-  <canvas id="bgCanvas"></canvas>
+    
 
   <!-- UI Sections (Home, Admin Signup/Login, User View, Admin Panel, User Panel, etc.) -->
   <!-- ✅ ... (unchanged HTML from your original code, so skipping here for brevity) -->
@@ -268,7 +268,17 @@
     <p id="userSummary"></p>
     <button class="back-btn" onclick="goHome()">Back</button>
   </div>
-
+<div id="qrPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000000aa; backdrop-filter:blur(5px); z-index:9999; justify-content:center; align-items:center;">
+  <div style="background:#1e1e1e; padding:20px; border-radius:12px; text-align:center; color:white; box-shadow:0 0 20px #00ff99;">
+    <h2>Scan to Pay</h2>
+    <div id="qrCodeContainer" style="margin: 20px 0;"></div>
+    <p id="upiInfoText"></p>
+   <!-- <button onclick="markAsPaid()" style="margin-top: 10px; padding: 10px 20px;">Mark as Paid</button> -->
+    <br><br>
+    <button onclick="closeQR()" style="background:#444; padding: 5px 10px;">Close</button>
+  </div>
+    </div>
+  <canvas id="bgCanvas"></canvas>
   <script>
       window.onload = function () {
   const savedAdmin = sessionStorage.getItem('admin');
@@ -475,7 +485,7 @@ function closeQR() {
   goHome();
 }*/
 async function adminSignup() {
-  const user = signupUsername.value.trim();
+  const user = document.getElementById('signupUsername').value.trim(); // ✅ This always works
   const pass = signupPassword.value;
   const purpose = signupPurpose.value.trim();
   const upi = signupUPI.value.trim();
@@ -992,15 +1002,5 @@ function editAmount(index) {
 };
 
   </script>
-  <div id="qrPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000000aa; backdrop-filter:blur(5px); z-index:9999; justify-content:center; align-items:center;">
-  <div style="background:#1e1e1e; padding:20px; border-radius:12px; text-align:center; color:white; box-shadow:0 0 20px #00ff99;">
-    <h2>Scan to Pay</h2>
-    <div id="qrCodeContainer" style="margin: 20px 0;"></div>
-    <p id="upiInfoText"></p>
-   <!-- <button onclick="markAsPaid()" style="margin-top: 10px; padding: 10px 20px;">Mark as Paid</button> -->
-    <br><br>
-    <button onclick="closeQR()" style="background:#444; padding: 5px 10px;">Close</button>
-  </div>
-</div>
 </body>
 </html>
