@@ -468,7 +468,7 @@ function closeQR() {
   alert('Signup Successful!');
   goHome();
 }*/
-async function adminSignup() {
+/*async function adminSignup() {
   const user = signupUsername.value.trim();
   const pass = signupPassword.value;
   const purpose = signupPurpose.value.trim();
@@ -483,6 +483,34 @@ async function adminSignup() {
     .insert([{ username: user, password: hashedPassword, purpose, upi }]);
 
   if (error) return alert("Signup failed: " + error.message);
+  alert("Signup successful!");
+  goHome();
+}*/
+      async function adminSignup() {
+  const user = signupUsername.value.trim();
+  const pass = signupPassword.value;
+  const purpose = signupPurpose.value.trim();
+  const upi = signupUPI.value.trim();
+
+  if (!user || !pass || !purpose || !upi) {
+    alert("Fill all fields");
+    return;
+  }
+
+  const hashedPassword = await bcrypt.hash(pass, 10);
+  console.log("🔍 Inserting admin with:", { user, hashedPassword, purpose, upi });
+
+  const { data, error } = await supabase
+    .from('admins')
+    .insert([{ username: user, password: hashedPassword, purpose, upi }]);
+
+  console.log("🧾 INSERT RESULT:", { data, error });
+
+  if (error) {
+    alert("Signup failed: " + error.message);
+    return;
+  }
+
   alert("Signup successful!");
   goHome();
 }
